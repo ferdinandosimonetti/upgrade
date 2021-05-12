@@ -1,0 +1,15 @@
+{
+    "version": 1,
+    "storageDriverName": "ontap-nas",
+    "backendName": "ontap-upgrade",
+    "managementLIF": "172.20.11.30",
+    "dataLIF": "172.20.11.30",
+    "svm": "svm_trident",
+    "username": "vsadmin",
+    "password": "Netapp123!",
+    "nfsMountOptions": "nfsvers=3",
+    "defaults": {
+        "spaceReserve": "none",
+        "exportPolicy": "Kubernetes-GE"
+    }
+}

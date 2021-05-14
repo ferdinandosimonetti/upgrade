@@ -1,0 +1,14 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: hotwarm
+  namespace: elastic
+spec:
+  version: 7.12.1
+  count: 1
+  elasticsearchRef:
+    name: hotwarm
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true       

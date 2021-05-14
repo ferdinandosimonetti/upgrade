@@ -15,7 +15,7 @@ spec:
   nodeSets:
   # hot nodes, with high CPU and fast IO
   - name: hot
-    count: 1
+    count: 2
     config:
       node.attr.data: hot
       cluster.routing.allocation.awareness.attributes: k8s_node_name
@@ -30,10 +30,11 @@ spec:
         - name: elasticsearch
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms3g -Xmx3g
+            value: -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=85.0
+#            value: -Xms3g -Xmx3g
           resources:
             requests:
-              memory: 4Gi
+              memory: 2Gi
               cpu: 2
             limits:
               memory: 4Gi
@@ -44,15 +45,14 @@ spec:
             - labelSelector:
                 matchLabels:
                   elasticsearch.k8s.elastic.co/cluster-name: hotwarm
-              topologyKey: kubernetes.io/hostname
           nodeAffinity:
             requiredDuringSchedulingIgnoredDuringExecution:
               nodeSelectorTerms:
               - matchExpressions:
-                - key: kubernetes.io/hostname
+                - key: diskType
                   operator: In
                   values:
-                  - gepvlk8w01
+                  - ssd
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -80,10 +80,11 @@ spec:
         - name: elasticsearch
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms1536m -Xmx1536m
+            value: -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=85.0
+#            value: -Xms1536m -Xmx1536m
           resources:
             requests:
-              memory: 2Gi
+              memory: 1Gi
               cpu: 2
             limits:
               memory: 2Gi

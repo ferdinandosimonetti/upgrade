@@ -1,0 +1,39 @@
+---
+replicas: 2
+
+persistence:
+  enabled: true
+
+logstashConfig:
+  logstash.yml: |
+    http.host: 0.0.0.0
+    xpack.monitoring.enabled: true
+    xpack.monitoring.elasticsearch.username: 'elastic'
+    xpack.monitoring.elasticsearch.password: '${ELASTICSEARCH_PASSWORD}'
+    xpack.monitoring.elasticsearch.hosts: ["https://quickstart-es-http:9200"]
+    xpack.monitoring.elasticsearch.ssl.certificate_authority: /usr/share/logstash/config/certs/ca.crt
+
+logstashPipeline:
+  uptime.conf: |
+    input { exec { command => "uptime" interval => 30 } }
+    output { elasticsearch {
+      hosts => ["https://quickstart-es-http:9200"]
+      cacert => "/usr/share/logstash/config/certs/ca.crt"
+      user => 'elastic'
+      password => '${ELASTICSEARCH_PASSWORD}'
+      index => "logstash"
+      }
+    }
+
+secretMounts:
+  - name: quickstart-es-http-certs-public
+    secretName: quickstart-es-http-certs-public
+    path: /usr/share/logstash/config/certs
+
+extraEnvs:
+  - name: 'ELASTICSEARCH_PASSWORD'
+    valueFrom:
+      secretKeyRef:
+        name: quickstart-es-elastic-user
+        key: elastic
+
